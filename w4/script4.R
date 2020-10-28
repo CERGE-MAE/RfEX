@@ -16,7 +16,7 @@ list.files("w4/data")
 #       columns separated by comma ','
 #       decimals separated by dot '.'
 #       rows separated by newline '\n'
-# fied description (colnames) non-mandatory
+# filed description (colnames) non-mandatory
 csv = read_csv("w4/data/london_2014-05.csv")
 head(csv)
 
@@ -46,11 +46,13 @@ json = read_file("w4/data/fiscal2017.json")
 json = fromJSON(json)
 
 json$data %>% View()
+json$meta$view$columns %>% View()
+colnames(json$data) = json$meta$view$columns$name
+
 
 # ANY TABULAR FLATFILE ----------------------------------------------------
 # any flatfile with rigid separators
 del = read_delim("w4/data/london_2014-05.tsv", delim = "\t")
-
 
 # RDATA / RDS -------------------------------------------------------------------
 # saving R objects (whatever in your Environment)
@@ -104,7 +106,7 @@ sales %>%
 # what are the countries with no region value (NA)?
 na_territory = 
     sales %>% 
-    filter(is.na(TERRITORY)) %>% 
+    filter(is.na(TERRITORY)) %>%
     pull(COUNTRY) %>% 
     unique()
 na_territory
