@@ -1,4 +1,5 @@
 library(magrittr)
+install.packages("magrittr")
 
 # 1.) FUN WITH FACTORS ----------------------------------------------------
 sample(c("3","1"), 20, replace = T)
@@ -66,7 +67,10 @@ stocks =
 
 # OVERVIEW
 head(stocks)
+str(stocks)
 dim(stocks)
+nrow(stocks)
+ncol(stocks)
 summary(stocks)
 
 # RANGE OF DAX CLOSING VALUES
@@ -104,8 +108,8 @@ stocks %>%
 #        first 5 days of even years
 #        first 10 days of odd years
 stocks %>% 
-    select(day, year, SWMI, CAC) %>%
-    filter(year %% 2 == 0 & | year %% 2 == 1 &)
+    select(day, year, SMI, CAC) %>%
+    filter((year %% 2 == 0 & day <= 5) | (year %% 2 == 1 & day <= 10))
 
 # OTHER WAYS OF SELECT SPECIFICATION
     ## A range of columns
