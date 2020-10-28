@@ -1,7 +1,6 @@
 library(magrittr)
 library(tidyverse)
 
-
 # ORIENTATION -------------------------------------------------------------
 getwd()
 list.files("w4/data")
@@ -12,6 +11,7 @@ list.files("w4/data")
 
 # CSV ------------------------------------------------------------------
 # csv = comma separated values
+# see RFC 4180 (https://tools.ietf.org/html/rfc4180)
 # a simple flatfile:
 #       columns separated by comma ','
 #       decimals separated by dot '.'
@@ -20,7 +20,7 @@ list.files("w4/data")
 csv = read_csv("w4/data/london_2014-05.csv")
 head(csv)
 
-# A special sub-type is CSV saved from Slav version of Excel (yes, Excel hates you)
+# A special sub-type is CSV saved from Slavic version of Excel (yes, Excel hates you)
 # looks like csv, but has different separators:
 #       columns separated by semicolon ';'
 #       decimals separated by comma ','
@@ -29,7 +29,7 @@ head(csv2)
 
 
 # XLS ---------------------------------------------------------------------
-# Excel based binary files
+# Excel based ?binary? files
 # widely used everywhere
 # tabular content
 library(readxl)
@@ -38,6 +38,9 @@ head(xls)
 
 
 # JSON ---------------------------------------------------------------------
+# json = Javascript object notation
+# see RFC 7159 (https://tools.ietf.org/html/rfc7159)
+# hierarchical key=value like structure, widely used in web applications
 library(jsonlite)
 json = read_file("w4/data/fiscal2017.json")
 json = fromJSON(json)
@@ -61,7 +64,6 @@ rds = readRDS("w4/data/london.RDS")
 # econmap              https://toolbox.google.com/datasetsearch/search?query=econometrics%20xlsx&docid=LY85I4W1qT8Xe8L9AAAAAA%3D%3D
 # fiscal2017           https://toolbox.google.com/datasetsearch/search?query=economics%20json&docid=QU9%2F0grLqAZqGRCGAAAAAA%3D%3D
 
-
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 ############ EXPORT #############
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -81,7 +83,6 @@ saveRDS(rds, file = "w4/data/london.RDS")
 # XLS
 library(writexl)
 write_xlsx(xls, "w4/data/econmap.xlsx")
-
 
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 ############ MUTATE & AGGREGATE #############
@@ -131,7 +132,7 @@ sales %>%
               visits = length(ORDERNUMBER))
 
 # SALES PER YEAR ----------------------------------------------------------
-# the first overvie, what are the sales each year?
+# the first overview, what are the sales each year?
 sales %>% 
     group_by(YEAR_ID) %>% 
     summarise(sales = sum(SALES))
@@ -154,11 +155,8 @@ sales %>%
     group_by(YEAR_ID) %>% 
     summarise(sales_shr = sum(first5 * sales) / sum(sales))
 
-# what is the projection for 2010?
+# what is the projection for 2005?
 sales %>% 
     group_by(YEAR_ID) %>% 
     summarise(sales = sum(SALES)) %>%
     mutate(sales = ifelse(YEAR_ID == "2005", sales / 0.25, sales))
-
-
-    

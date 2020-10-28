@@ -37,7 +37,7 @@ na_dif = function(x, y){
 }
 
 # OVERVIEWS ---------------------------------------------------------------
-# what is the export/import and the trade deficite per commodity type and country?
+# what is the export/import and the trade deficit per commodity type and country?
 EI = 
     japan %>% 
     select(exp_imp, country, hs2, value) %>% 
@@ -50,16 +50,16 @@ EI =
            dif = na_dif(export, import))
 EI
 
-# report the export, import and trade performance for each commodity across the countries
-# performance is defined as percentage of the mean commodity sales (in all countries)
-EI_compare = 
+# for each country, find the import & export shares of each commodity
+# e.g. commodity 1 makes 20 % of total exports of country 1
+EI_comp = 
     EI %>% 
-    select(-dif_na) %>% 
-    gather(EI, value, export:dif) %>% 
-    group_by(hs2) %>% 
-    mutate(comparison = value / mean(value, na.rm = T)) %>% 
+    select(-dif_na, -dif) %>% 
+    gather(EI, value, export:import) %>% 
+    group_by(country, EI) %>% 
+    mutate(importance = 100 * value / sum(value, na.rm = T)) %>% 
     select(- value) %>% 
-    spread(EI, comparison)
+    spread(EI, importance)
 
 list.files("w5/data")
 
@@ -68,24 +68,18 @@ countries = read_csv("w5/data/country_eng.csv", col_types = "ccc")
 head(countries)
 colnames(countries) %<>% tolower()
 
-
 h2 = read_csv("w5/data/hs2_eng.csv")
 head(h2)
 
-# large outliers
-EI_out = 
-    EI_compare %>% 
-    filter(abs(dif) > 30)
-
 # add country identifiers
-EI_out %>% 
+EI_comp %>% 
     full_join(countries) %>% View()
 
-EI_out %>% 
+EI_comp %>% 
     left_join(countries) %>% View()
 
 # & add commodity description
-EI_out %>% 
+EI_comp %>% 
     left_join(countries, by = c("country" = "country")) %>% 
     inner_join(h2) %>% 
     View()
