@@ -64,8 +64,8 @@ read_by_year = function(path, years) {
                      )
               )
 
-            } else if (year != "all") {
-            } else {
+    } else if (year != "all") {
+    } else {
         stop("Please specify years as numeric or character vector, or use 'all' to use all files")
     } # WHAT IS WRONG WITH THIS?
     
