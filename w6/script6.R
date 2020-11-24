@@ -16,8 +16,10 @@ for (i in files) {
         games = read_csv(i)
     }
 }
+games
 
 # vectorised
+games = map_df(files, read_csv)
 games = map_df(files,
                ~read_csv(.x, col_types = cols(.default = "c")))
 
@@ -25,10 +27,11 @@ games = map_df(files,
 # PARSE NUMERIC FEATURES --------------------------------------------------
 
 # R is functional programming language
+# prepare a function that will check, whether the columns can be changed 
+# to numeric -> if yes, change it
 check_numeric = function(col) {
     nas =
-        col %>%
-        {.[!is.na(.)]} %>% 
+        col[!is.na(col)] %>% 
         as.numeric() %>% 
         is.na() %>%
         sum()
@@ -46,9 +49,8 @@ for (i in colnames(games)) {
 }
 
 # vectorised
-games %<>% 
-    map_df(check_numeric)
-
+games = map_df(games, check_numeric)
+    
 
 # READ BY YEAR FUNCTION ---------------------------------------------------
 
@@ -70,8 +72,7 @@ read_by_year = function(path, years) {
     } # WHAT IS WRONG WITH THIS?
     
     input =
-        files %>% 
-        {file.path(path, .)} %>% 
+        file.path(path, files) %>% 
         map_df(~read_csv(.x, col_types = cols(.default = "c"))) %>% 
         map_df(check_numeric)
     
@@ -119,7 +120,6 @@ games %>%
 # SAVE BY YEAR ------------------------------------------------------------
 # dir.create("w6/data/yearly")
 
-# split(games, games$Year_of_Release) %>% 
 games %>% 
     split(.$Year_of_Release) %>% 
     map(., ~write_csv(.x,
@@ -129,3 +129,16 @@ games %>%
                               )
                        )
          )
+
+list_df = 
+    games %>% 
+    split(.$Year_of_Release) 
+
+for (i in list_df) {
+    write_csv(i,
+              paste0("w6/data/yearly/game_sales",
+                     unique(i$Year_of_Release)
+              )
+    )
+    
+}
