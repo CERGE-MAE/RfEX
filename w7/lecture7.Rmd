@@ -1,0 +1,231 @@
+---
+title: "Lecture 7"
+author: "Michal Kubi&#353;ta"
+date: "2018/11/07"
+output:
+  xaringan::moon_reader:
+    lib_dir: libs
+    nature:
+      highlightStyle: github
+      highlightLines: true
+      countIncrementalSlides: false
+---
+
+## Structure
+- Character functions
+- Regular expressions
+
+```{r setup, include = FALSE}
+library(magrittr)
+library(tidyverse)
+library(DT)
+```
+
+---
+class: middle, inverse
+
+# Character functions
+
+---
+
+## Why text?
+- text is human based format; computers struggle
+- difficult but important
+  - sentiment analysis
+  - word2vec
+  - natural language processing
+
+---
+
+## Introducing the data
+
+```{r romeo&juliet}
+romeo = readLines("http://www.gutenberg.org/cache/epub/1112/pg1112.txt", encoding = "UTF8")
+romeo %<>% {.[. != ""]}
+
+first_line = which(romeo[1:100] == "1595")
+
+romeo = romeo[-1:-first_line]
+persons = romeo[4:28]
+corpus = romeo[-1:-32]
+```
+
+---
+
+## Simple functions
+
+```{r simple_funcs}
+library(stringr)
+
+corpus[1:4] %T>% 
+    print() %>% 
+    str_length() # or "nchar()" from base R
+
+
+(prol = str_sub(corpus[1], 29, 36)) # or "substring()" from base R
+```
+
+---
+
+## Pasting text
+
+```{r paste}
+paste("the", prol, sep = "_||_") %>% #default sep is whitespace
+    print() %>% 
+    tolower() %>% # or "stringr::str_to_lower()"
+    print() %>% 
+    toupper() # or "stringr::str_to_upper()"
+
+paste0("the //__//", prol) # no separator
+
+file.path("w7", "data", "text.csv") # file path wrapper utility
+```
+
+
+---
+
+## Splitting text
+
+```{r split}
+head(persons, 3) %>% 
+    print() %>% 
+    str_split(",",n = 2) # split only once
+```
+
+---
+
+## Basic text cleaning
+
+```{r clean}
+corpus[1] %>%
+    print() %>% 
+    str_trim() # take away the preceding and proceeding whitespaces
+
+str_trim("  abc      def  "); str_squish("  abc      def  ")
+```
+
+---
+
+## Mojibake
+- encoding troubles
+
+```{r encoding}
+(jap = readLines("japanese.txt"))
+```
+
+<iframe
+  title="Wiki on japanese character encoding"
+  width="800"
+  height="300"
+  src="https://en.wikipedia.org/wiki/Japanese_language_and_computers#Character_encodings">
+</iframe>
+
+---
+
+## Mojibake
+- iconv for the rescue
+
+```{r encoding_solution}
+# iconvlist()
+iconv(jap, "x-mac-japanese", "UTF-8")
+```
+
+---
+
+class: middle, inverse
+
+# Regular expressions
+
+---
+
+## RegEx
+- way of pattern compilation
+  - extracting parts of the text
+- when the position isn't fixed (most of the times)
+  - str_sub doesn't help
+```{r substr_vs_regex}
+(files = paste0("file_", c(0,1,10,100,1000), "_", 2010:2014, ".csv"))
+str_sub(files, 8, 11)
+```
+
+---
+
+## Functions
+
+```{r}
+str_detect("abcd", "a") # grep / grepl
+str_locate("abcd", "a")
+str_extract("abcd", "a") # gsub
+str_replace("abcd", "ab","d") # gsub
+str_remove("abcd", "a") # gsub
+```
+
+---
+
+## Pattern specification
+.pull-left[
+```{r pattern_specs_left}
+#"." any character
+str_replace("abcd_e",".","g")
+# "*" any number of times
+str_extract("abc_de","_.*")
+# "?" at most once
+str_extract("abc_de","_.?")
+# "+" at least once
+str_extract("abc_de","_.+")
+```
+]
+
+.pull-right[
+```{r pattern_specs_right}
+# "^" start of string
+str_replace_all("abcd_a","^a","g")
+# "$" end of string
+str_replace_all("abcd_a","a$","g")
+# "|" RegEx or 
+str_extract(c("abc","cd"),"ab|c")
+```
+]
+
+---
+
+## Pattern specification cont.
+```{r pattern_specs}
+# "{}" number of times
+str_extract("aaaabcde","a{1,3}")
+str_extract("aaaacde","a{2,}")
+# "[]" set of possibilities
+str_extract(c("aabcde"),"[ab]{3}")
+# "()" glue characters
+str_extract(c("ababcdab"),"(ab){2}")
+```
+
+---
+
+## Predefined sets
+```{r regex_sets}
+str_extract("abc123_ ?!<>","[:alnum:]*") # or [:alpha:] or [:digit:] only
+str_replace_all("abc123_ ?!","[:punct:]","X") # special characters
+str_extract("abc123_ ?!<>","[:space:]") # whitespace, newlines, ...
+str_replace("abc123_ ?!<>","\\s","XX") # special characters (whitespace in this case)
+
+```
+
+---
+
+## Escaping characters
+
+```{r escape}
+str_extract("$?+.",".")
+str_extract("$?+.","\\.")
+```
+
+---
+
+## Original exercise solved
+
+```{r substr_vs_regex_solved}
+(files = paste0("file_", c(0,1,10,100,1000), "_", 2010:2014, ".csv"))
+str_extract(files,"_[:alnum:]*\\.") %>% 
+    str_remove_all("[:punct:]")
+```

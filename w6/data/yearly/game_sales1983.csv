@@ -1,0 +1,18 @@
+Name,Platform,Year_of_Release,Genre,Publisher,NA_Sales,EU_Sales,JP_Sales,Other_Sales,Global_Sales,Critic_Score,Critic_Count,User_Score,User_Count,Developer,Rating
+Baseball,NES,1983,Sports,Nintendo,0.73,0.1,2.35,0.02,3.2,NA,NA,NA,NA,NA,NA
+Mario Bros.,NES,1983,Platform,Nintendo,0.51,0.12,1.63,0.02,2.28,NA,NA,NA,NA,NA,NA
+Mahjong,NES,1983,Misc,Nintendo,0.01,0,2.13,0,2.14,NA,NA,NA,NA,NA,NA
+Pitfall II: Lost Caverns,2600,1983,Platform,Activision,1.22,0.07,0,0.02,1.31,NA,NA,NA,NA,NA,NA
+Donkey Kong,NES,1983,Platform,Nintendo,0.23,0.05,0.84,0.01,1.13,NA,NA,NA,NA,NA,NA
+Donkey Kong Jr.,NES,1983,Platform,Nintendo,0.33,0.07,0.7,0.01,1.11,NA,NA,NA,NA,NA,NA
+Popeye,NES,1983,Platform,Nintendo,0.51,0.12,0.45,0.02,1.1,NA,NA,NA,NA,NA,NA
+Jr. Pac-Man,2600,1983,Puzzle,Atari,0.72,0.05,0,0.01,0.78,NA,NA,NA,NA,NA,NA
+Crystal Castles,2600,1983,Action,Atari,0.72,0.04,0,0.01,0.77,NA,NA,NA,NA,NA,NA
+Midnight Magic,2600,1983,Action,Atari,0.47,0.03,0,0.01,0.5,NA,NA,NA,NA,NA,NA
+Millipede,2600,1983,Shooter,Atari,0.45,0.03,0,0.01,0.48,NA,NA,NA,NA,NA,NA
+Gremlins,2600,1983,Action,Atari,0.43,0.03,0,0,0.46,NA,NA,NA,NA,NA,NA
+Pengo,2600,1983,Adventure,Atari,0.38,0.02,0,0,0.4,NA,NA,NA,NA,NA,NA
+Frostbite,2600,1983,Action,Activision,0.32,0.02,0,0,0.34,NA,NA,NA,NA,NA,NA
+Frogger II: Threeedeep!,2600,1983,Action,Parker Bros.,0.31,0.02,0,0,0.33,NA,NA,NA,NA,NA,NA
+Dolphin,2600,1983,Action,Activision,0.27,0.02,0,0,0.29,NA,NA,NA,NA,NA,NA
+Mr. Do!'s Castle,2600,1983,Action,Parker Bros.,0.15,0.01,0,0,0.17,NA,NA,NA,NA,NA,NA

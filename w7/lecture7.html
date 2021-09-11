@@ -1,0 +1,598 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+  <head>
+    <title>Lecture 7</title>
+    <meta charset="utf-8" />
+    <meta name="author" content="Michal Kubišta" />
+    <link href="libs/remark-css-0.0.1/default.css" rel="stylesheet" />
+    <link href="libs/remark-css-0.0.1/default-fonts.css" rel="stylesheet" />
+  </head>
+  <body>
+    <textarea id="source">
+class: center, middle, inverse, title-slide
+
+# Lecture 7
+### Michal Kubišta
+### 2018/11/07
+
+---
+
+
+## Structure
+- Character functions
+- Regular expressions
+
+
+
+---
+class: middle, inverse
+
+# Character functions
+
+---
+
+## Why text?
+- text is human based format; computers struggle
+- difficult but important
+  - sentiment analysis
+  - word2vec
+  - natural language processing
+
+---
+
+## Introducing the data
+
+
+```r
+romeo = readLines("http://www.gutenberg.org/cache/epub/1112/pg1112.txt", encoding = "UTF8")
+romeo %&lt;&gt;% {.[. != ""]}
+
+first_line = which(romeo[1:100] == "1595")
+
+romeo = romeo[-1:-first_line]
+persons = romeo[4:28]
+corpus = romeo[-1:-32]
+```
+
+---
+
+## Simple functions
+
+
+```r
+library(stringr)
+
+corpus[1:4] %T&gt;% 
+    print() %&gt;% 
+    str_length() # or "nchar()" from base R
+```
+
+```
+## [1] "                        THE PROLOGUE"          
+## [2] "                        Enter Chorus."         
+## [3] "  Chor. Two households, both alike in dignity,"
+## [4] "    In fair Verona, where we lay our scene,"
+```
+
+```
+## [1] 36 37 46 43
+```
+
+```r
+(prol = str_sub(corpus[1], 29, 36)) # or "substring()" from base R
+```
+
+```
+## [1] "PROLOGUE"
+```
+
+---
+
+## Pasting text
+
+
+```r
+paste("the", prol, sep = "_||_") %&gt;% #default sep is whitespace
+    print() %&gt;% 
+    tolower() %&gt;% # or "stringr::str_to_lower()"
+    print() %&gt;% 
+    toupper() # or "stringr::str_to_upper()"
+```
+
+```
+## [1] "the_||_PROLOGUE"
+## [1] "the_||_prologue"
+```
+
+```
+## [1] "THE_||_PROLOGUE"
+```
+
+```r
+paste0("the //__//", prol) # no separator
+```
+
+```
+## [1] "the //__//PROLOGUE"
+```
+
+```r
+file.path("w7", "data", "text.csv") # file path wrapper utility
+```
+
+```
+## [1] "w7/data/text.csv"
+```
+
+
+---
+
+## Splitting text
+
+
+```r
+head(persons, 3) %&gt;% 
+    print() %&gt;% 
+    str_split(",",n = 2) # split only once
+```
+
+```
+## [1] "  Chorus."                                     
+## [2] "  Escalus, Prince of Verona."                  
+## [3] "  Paris, a young Count, kinsman to the Prince."
+```
+
+```
+## [[1]]
+## [1] "  Chorus."
+## 
+## [[2]]
+## [1] "  Escalus"          " Prince of Verona."
+## 
+## [[3]]
+## [1] "  Paris"                               
+## [2] " a young Count, kinsman to the Prince."
+```
+
+---
+
+## Basic text cleaning
+
+
+```r
+corpus[1] %&gt;%
+    print() %&gt;% 
+    str_trim() # take away the preceding and proceeding whitespaces
+```
+
+```
+## [1] "                        THE PROLOGUE"
+```
+
+```
+## [1] "THE PROLOGUE"
+```
+
+```r
+str_trim("  abc      def  "); str_squish("  abc      def  ")
+```
+
+```
+## [1] "abc      def"
+```
+
+```
+## [1] "abc def"
+```
+
+---
+
+## Mojibake
+- encoding troubles
+
+
+```r
+(jap = readLines("japanese.txt"))
+```
+
+```
+## [1] "\220V‚ ‚\275‚ç‚µ‚\242‹LŽ–‚«‚¶‚đŹ‘‚©‚±‚¤‚Ć‚\242‚¤‹CŽť‚«‚ŕ‚ż‚É‚Č‚é‚Ü‚Ĺ’·‚Č‚Ş‚\242ŽžŠÔ‚¶‚©‚ń‚Ş‚©‚©‚Á‚\275\201BŹ‘‚©‚«‚\275‚\242‚±‚Ć‚Í‚\275‚­‚ł‚ń‚ ‚Á‚\275‚Ż‚ę‚Ç\201A‘§Žq‚Ţ‚·‚±‚đŽY‚¤‚ń‚ľŚă‚ ‚Ć‚ÍŹ‘‚©‚­ŽžŠÔ‚¶‚©‚ń‚Ş‚ ‚Ü‚č‚Č‚©‚Á‚\275\201B"
+```
+
+&lt;iframe
+  title="Wiki on japanese character encoding"
+  width="800"
+  height="300"
+  src="https://en.wikipedia.org/wiki/Japanese_language_and_computers#Character_encodings"&gt;
+&lt;/iframe&gt;
+
+---
+
+## Mojibake
+- iconv for the rescue
+
+
+```r
+# iconvlist()
+iconv(jap, "x-mac-japanese", "UTF-8")
+```
+
+```
+## [1] "&lt;U+65B0&gt;&lt;U+3042&gt;&lt;U+305F&gt;&lt;U+3089&gt;&lt;U+3057&gt;&lt;U+3044&gt;&lt;U+8A18&gt;&lt;U+4E8B&gt;&lt;U+304D&gt;&lt;U+3058&gt;&lt;U+3092&gt;&lt;U+66F8&gt;&lt;U+304B&gt;&lt;U+3053&gt;&lt;U+3046&gt;&lt;U+3068&gt;&lt;U+3044&gt;&lt;U+3046&gt;&lt;U+6C17&gt;&lt;U+6301&gt;&lt;U+304D&gt;&lt;U+3082&gt;&lt;U+3061&gt;&lt;U+306B&gt;&lt;U+306A&gt;&lt;U+308B&gt;&lt;U+307E&gt;&lt;U+3067&gt;&lt;U+9577&gt;&lt;U+306A&gt;&lt;U+304C&gt;&lt;U+3044&gt;&lt;U+6642&gt;&lt;U+9593&gt;&lt;U+3058&gt;&lt;U+304B&gt;&lt;U+3093&gt;&lt;U+304C&gt;&lt;U+304B&gt;&lt;U+304B&gt;&lt;U+3063&gt;&lt;U+305F&gt;&lt;U+3002&gt;&lt;U+66F8&gt;&lt;U+304B&gt;&lt;U+304D&gt;&lt;U+305F&gt;&lt;U+3044&gt;&lt;U+3053&gt;&lt;U+3068&gt;&lt;U+306F&gt;&lt;U+305F&gt;&lt;U+304F&gt;&lt;U+3055&gt;&lt;U+3093&gt;&lt;U+3042&gt;&lt;U+3063&gt;&lt;U+305F&gt;&lt;U+3051&gt;&lt;U+308C&gt;&lt;U+3069&gt;&lt;U+3001&gt;&lt;U+606F&gt;&lt;U+5B50&gt;&lt;U+3080&gt;&lt;U+3059&gt;&lt;U+3053&gt;&lt;U+3092&gt;&lt;U+7523&gt;&lt;U+3046&gt;&lt;U+3093&gt;&lt;U+3060&gt;&lt;U+5F8C&gt;&lt;U+3042&gt;&lt;U+3068&gt;&lt;U+306F&gt;&lt;U+66F8&gt;&lt;U+304B&gt;&lt;U+304F&gt;&lt;U+6642&gt;&lt;U+9593&gt;&lt;U+3058&gt;&lt;U+304B&gt;&lt;U+3093&gt;&lt;U+304C&gt;&lt;U+3042&gt;&lt;U+307E&gt;&lt;U+308A&gt;&lt;U+306A&gt;&lt;U+304B&gt;&lt;U+3063&gt;&lt;U+305F&gt;&lt;U+3002&gt;"
+```
+
+---
+
+class: middle, inverse
+
+# Regular expressions
+
+---
+
+## RegEx
+- way of pattern compilation
+  - extracting parts of the text
+- when the position isn't fixed (most of the times)
+  - str_sub doesn't help
+
+```r
+(files = paste0("file_", c(0,1,10,100,1000), "_", 2010:2014, ".csv"))
+```
+
+```
+## [1] "file_0_2010.csv"    "file_1_2011.csv"    "file_10_2012.csv"  
+## [4] "file_100_2013.csv"  "file_1000_2014.csv"
+```
+
+```r
+str_sub(files, 8, 11)
+```
+
+```
+## [1] "2010" "2011" "_201" "0_20" "00_2"
+```
+
+---
+
+## Functions
+
+
+```r
+str_detect("abcd", "a") # grep / grepl
+```
+
+```
+## [1] TRUE
+```
+
+```r
+str_locate("abcd", "a")
+```
+
+```
+##      start end
+## [1,]     1   1
+```
+
+```r
+str_extract("abcd", "a") # gsub
+```
+
+```
+## [1] "a"
+```
+
+```r
+str_replace("abcd", "ab","d") # gsub
+```
+
+```
+## [1] "dcd"
+```
+
+```r
+str_remove("abcd", "a") # gsub
+```
+
+```
+## [1] "bcd"
+```
+
+---
+
+## Pattern specification
+.pull-left[
+
+```r
+#"." any character
+str_replace("abcd_e",".","g")
+```
+
+```
+## [1] "gbcd_e"
+```
+
+```r
+# "*" any number of times
+str_extract("abc_de","_.*")
+```
+
+```
+## [1] "_de"
+```
+
+```r
+# "?" at most once
+str_extract("abc_de","_.?")
+```
+
+```
+## [1] "_d"
+```
+
+```r
+# "+" at least once
+str_extract("abc_de","_.+")
+```
+
+```
+## [1] "_de"
+```
+]
+
+.pull-right[
+
+```r
+# "^" start of string
+str_replace_all("abcd_a","^a","g")
+```
+
+```
+## [1] "gbcd_a"
+```
+
+```r
+# "$" end of string
+str_replace_all("abcd_a","a$","g")
+```
+
+```
+## [1] "abcd_g"
+```
+
+```r
+# "|" RegEx or 
+str_extract(c("abc","cd"),"ab|c")
+```
+
+```
+## [1] "ab" "c"
+```
+]
+
+---
+
+## Pattern specification cont.
+
+```r
+# "{}" number of times
+str_extract("aaaabcde","a{1,3}")
+```
+
+```
+## [1] "aaa"
+```
+
+```r
+str_extract("aaaacde","a{2,}")
+```
+
+```
+## [1] "aaaa"
+```
+
+```r
+# "[]" set of possibilities
+str_extract(c("aabcde"),"[ab]{3}")
+```
+
+```
+## [1] "aab"
+```
+
+```r
+# "()" glue characters
+str_extract(c("ababcdab"),"(ab){2}")
+```
+
+```
+## [1] "abab"
+```
+
+---
+
+## Predefined sets
+
+```r
+str_extract("abc123_ ?!&lt;&gt;","[:alnum:]*") # or [:alpha:] or [:digit:] only
+```
+
+```
+## [1] "abc123"
+```
+
+```r
+str_replace_all("abc123_ ?!","[:punct:]","X") # special characters
+```
+
+```
+## [1] "abc123X XX"
+```
+
+```r
+str_extract("abc123_ ?!&lt;&gt;","[:space:]") # whitespace, newlines, ...
+```
+
+```
+## [1] " "
+```
+
+```r
+str_replace("abc123_ ?!&lt;&gt;","\\s","XX") # special characters (whitespace in this case)
+```
+
+```
+## [1] "abc123_XX?!&lt;&gt;"
+```
+
+---
+
+## Escaping characters
+
+
+```r
+str_extract("$?+.",".")
+```
+
+```
+## [1] "$"
+```
+
+```r
+str_extract("$?+.","\\.")
+```
+
+```
+## [1] "."
+```
+
+---
+
+## Original exercise solved
+
+
+```r
+(files = paste0("file_", c(0,1,10,100,1000), "_", 2010:2014, ".csv"))
+```
+
+```
+## [1] "file_0_2010.csv"    "file_1_2011.csv"    "file_10_2012.csv"  
+## [4] "file_100_2013.csv"  "file_1000_2014.csv"
+```
+
+```r
+str_extract(files,"_[:alnum:]*\\.") %&gt;% 
+    str_remove_all("[:punct:]")
+```
+
+```
+## [1] "2010" "2011" "2012" "2013" "2014"
+```
+    </textarea>
+<style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
+<script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
+<script>var slideshow = remark.create({
+"highlightStyle": "github",
+"highlightLines": true,
+"countIncrementalSlides": false
+});
+if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
+  window.dispatchEvent(new Event('resize'));
+});
+(function(d) {
+  var s = d.createElement("style"), r = d.querySelector(".remark-slide-scaler");
+  if (!r) return;
+  s.type = "text/css"; s.innerHTML = "@page {size: " + r.style.width + " " + r.style.height +"; }";
+  d.head.appendChild(s);
+})(document);
+
+(function(d) {
+  var el = d.getElementsByClassName("remark-slides-area");
+  if (!el) return;
+  var slide, slides = slideshow.getSlides(), els = el[0].children;
+  for (var i = 1; i < slides.length; i++) {
+    slide = slides[i];
+    if (slide.properties.continued === "true" || slide.properties.count === "false") {
+      els[i - 1].className += ' has-continuation';
+    }
+  }
+  var s = d.createElement("style");
+  s.type = "text/css"; s.innerHTML = "@media print { .has-continuation { display: none; } }";
+  d.head.appendChild(s);
+})(document);
+// delete the temporary CSS (for displaying all slides initially) when the user
+// starts to view slides
+(function() {
+  var deleted = false;
+  slideshow.on('beforeShowSlide', function(slide) {
+    if (deleted) return;
+    var sheets = document.styleSheets, node;
+    for (var i = 0; i < sheets.length; i++) {
+      node = sheets[i].ownerNode;
+      if (node.dataset["target"] !== "print-only") continue;
+      node.parentNode.removeChild(node);
+    }
+    deleted = true;
+  });
+})();
+// adds .remark-code-has-line-highlighted class to <pre> parent elements
+// of code chunks containing highlighted lines with class .remark-code-line-highlighted
+(function(d) {
+  const hlines = d.querySelectorAll('.remark-code-line-highlighted');
+  const preParents = [];
+  const findPreParent = function(line, p = 0) {
+    if (p > 1) return null; // traverse up no further than grandparent
+    const el = line.parentElement;
+    return el.tagName === "PRE" ? el : findPreParent(el, ++p);
+  };
+
+  for (let line of hlines) {
+    let pre = findPreParent(line);
+    if (pre && !preParents.includes(pre)) preParents.push(pre);
+  }
+  preParents.forEach(p => p.classList.add("remark-code-has-line-highlighted"));
+})(document);</script>
+
+<script>
+(function() {
+  var links = document.getElementsByTagName('a');
+  for (var i = 0; i < links.length; i++) {
+    if (/^(https?:)?\/\//.test(links[i].getAttribute('href'))) {
+      links[i].target = '_blank';
+    }
+  }
+})();
+</script>
+
+<script>
+slideshow._releaseMath = function(el) {
+  var i, text, code, codes = el.getElementsByTagName('code');
+  for (i = 0; i < codes.length;) {
+    code = codes[i];
+    if (code.parentNode.tagName !== 'PRE' && code.childElementCount === 0) {
+      text = code.textContent;
+      if (/^\\\((.|\s)+\\\)$/.test(text) || /^\\\[(.|\s)+\\\]$/.test(text) ||
+          /^\$\$(.|\s)+\$\$$/.test(text) ||
+          /^\\begin\{([^}]+)\}(.|\s)+\\end\{[^}]+\}$/.test(text)) {
+        code.outerHTML = code.innerHTML;  // remove <code></code>
+        continue;
+      }
+    }
+    i++;
+  }
+};
+slideshow._releaseMath(document);
+</script>
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+(function () {
+  var script = document.createElement('script');
+  script.type = 'text/javascript';
+  script.src  = 'https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML';
+  if (location.protocol !== 'file:' && /^https?:/.test(script.src))
+    script.src  = script.src.replace(/^https?:/, '');
+  document.getElementsByTagName('head')[0].appendChild(script);
+})();
+</script>
+  </body>
+</html>

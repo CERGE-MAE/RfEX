@@ -1,0 +1,302 @@
+---
+title: "Lecture 6"
+author: "Michal Kubi&#353;ta"
+date: "2020/11/04"
+output:
+  xaringan::moon_reader:
+    lib_dir: libs
+    nature:
+      highlightStyle: github
+      highlightLines: true
+      countIncrementalSlides: false
+---
+
+## Structure
+- Conditionals
+- Functions
+- Loops & vectorisation
+```{r setup, include = FALSE}
+library(tidyverse)
+```
+
+---
+class: middle, inverse
+
+# Conditionals
+
+---
+
+## Control the flow
+- if-else structure
+
+```{r conditionals}
+weather = "rainy"
+
+if (weather == "sunny") {
+    print("Let's go outside")
+} else if (weather == "rainy") {
+    print("Let's program in R")
+} else {
+    print("Not enough information")
+}
+```
+
+---
+
+class: middle, inverse
+
+# Functions
+
+---
+
+## Simplify the process
+- If you use the same code 3 times, write a function!
+
+```{r function}
+select_activity = function(weather) {
+    if (weather == "sunny") {
+        print("Let's go outside")
+    } else if (weather == "rainy") {
+        print("Let's program in R")
+    } else {
+        print("Not enough information")
+    }
+}
+
+select_activity("rainy")
+select_activity("The snow is falling, sell snow!")
+```
+
+---
+
+## Functions running functions
+- build the stack of functions
+
+```{r recursion}
+read_data = function(path2file) {
+    input = read_csv(path2file, col_types = "c")
+    input %>% 
+        filter(....) %>% 
+        mutate(....) %>% 
+        return()
+}
+
+overview = function(data) {
+    print(head(data))
+    print(summary(data))
+}
+
+process = function(path2file) {
+    raw = read_data(path2file)
+    overview(raw)
+    return(raw)
+}
+
+```
+
+---
+
+## Arguments
+
+.pull-left[
+- default
+
+```{r default_args}
+tester = function(num = 1) {
+    if (num == 1) { 
+        TRUE 
+    } else {
+        FALSE
+    }
+}
+tester()
+
+```
+]
+.pull-right[
+- undefined arguments
+```{r}
+test = function(...){
+    args = list(...)
+    args
+}
+
+test(a = 5, b = "abcd")
+```
+]
+
+---
+
+## Returns
+
+```{r return}
+rename = function(vec, names) {
+    names(vec) = names
+}
+
+rename(1:4, c("a","b","c","d"))
+```
+
+**no value is printed!**
+
+--
+
+```{r return_2}
+rename = function(vec, names) {
+    names(vec) = names
+    return(vec)
+}
+
+rename(1:4, c("a","b","c","d"))
+```
+
+---
+
+## Return stops execution!
+
+```{r return_stop}
+stopper = function(msg = "No message supplied") {
+    print(msg)
+    return(NULL)
+    print("This is not printed")
+}
+
+non_stopper = function(msg = "No message supplied") {
+    print(msg)
+    print("This is printed")
+}
+
+stopper()
+non_stopper()
+```
+
+---
+
+## Scoping
+- when the same name doesn't point to the same variable
+
+```{r scope}
+a = 5
+my_func = function(a) {
+    print(a)
+    a = 9
+    print(a)
+}
+
+my_func(a = 7)
+a
+```
+
+---
+
+## But why?
+
+```{r environment}
+print(environment())
+
+my_func = function() {print(environment())}
+my_func()
+
+```
+
+---
+
+
+class: middle, inverse
+
+# Loops & vectorisation
+
+---
+
+## Doing operations again & again
+
+```{r loop_example}
+mtcars$mpg = as.numeric(mtcars$mpg)
+mtcars$cyl = as.numeric(mtcars$cyl)
+mtcars$disp = as.numeric(mtcars$disp)
+# dont
+```
+
+---
+
+## Loops
+- do the same thing with different input
+
+```{r loop_example2}
+cols = c("mpg", "cyl", "disp")
+
+for (i in cols) {
+    mtcars[,i] = as.numeric(mtcars[,i])
+}
+```
+
+---
+
+## Type of loops
+
+.pull-left[
+- **for loop**
+    - for every element, do
+```{r for_loop}
+for (i in 1:4) {
+    print(i)
+}
+```
+]
+.pull-right[
+- **while**
+    - while condition true, do something
+```{r while_loop}
+test = 8
+while (test < 10) {
+    print(test)
+    test = test + 1
+}
+```
+]
+
+---
+
+## Pros & Cons
+.pull-left[
+PRO
+- still better than code repetition
+- easy to comprehend
+]
+
+.pull-right[
+CON
+- **TERRIBLE** performance
+]
+
+--------------------------------------------   
+
+```{r loop_vec comparison}
+a = seq_len(100000000)
+system.time({
+    for (i in a) {
+        i^2
+    }
+})
+system.time({b = data.table::data.table(a)[, a^2]})
+```
+
+```{r cleanup, include = FALSE}
+rm(a, b)
+```
+
+---
+
+## So.....?
+- loops are useful for
+    - small number of repetitions
+    - when the number of repetitions is unknown (simulations)
+
+## For the rest there's vectorisation!
+- apply the function to each element
+- heavily optimised
+
+```{r vectorise}
+map_dbl(1:20, ~.x^2)
+map_dbl(1:20, sqrt)
+```

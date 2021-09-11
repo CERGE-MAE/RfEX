@@ -1,0 +1,10 @@
+Name,Platform,Year_of_Release,Genre,Publisher,NA_Sales,EU_Sales,JP_Sales,Other_Sales,Global_Sales,Critic_Score,Critic_Count,User_Score,User_Count,Developer,Rating
+Asteroids,2600,1980,Shooter,Atari,4,0.26,0,0.05,4.31,NA,NA,NA,NA,NA,NA
+Missile Command,2600,1980,Shooter,Atari,2.56,0.17,0,0.03,2.76,NA,NA,NA,NA,NA,NA
+Kaboom!,2600,1980,Misc,Activision,1.07,0.07,0,0.01,1.15,NA,NA,NA,NA,NA,NA
+Defender,2600,1980,Misc,Atari,0.99,0.05,0,0.01,1.05,NA,NA,NA,NA,NA,NA
+Boxing,2600,1980,Fighting,Activision,0.72,0.04,0,0.01,0.77,NA,NA,NA,NA,NA,NA
+Ice Hockey,2600,1980,Sports,Activision,0.46,0.03,0,0.01,0.49,NA,NA,NA,NA,NA,NA
+Freeway,2600,1980,Action,Activision,0.32,0.02,0,0,0.34,NA,NA,NA,NA,NA,NA
+Bridge,2600,1980,Misc,Activision,0.25,0.02,0,0,0.27,NA,NA,NA,NA,NA,NA
+Checkers,2600,1980,Misc,Atari,0.22,0.01,0,0,0.24,NA,NA,NA,NA,NA,NA

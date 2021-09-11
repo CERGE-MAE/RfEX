@@ -1,0 +1,120 @@
+---
+title: "Lecture 3"
+author: "Michal Kubi&#353;ta"
+date: "2020/10/14"
+output:
+  xaringan::moon_reader:
+    lib_dir: libs
+    nature:
+      highlightStyle: github
+      highlightLines: true
+      countIncrementalSlides: false
+---
+
+## Structure
+- Filtering
+- Selection
+- Practise
+
+---
+
+## Welcome to the world of Tidyverse
+- brought to us by Hadley Wickham
+- bundle of packages for ETL
+- good for middle sized datasets (~ till 5M cells)
+- the easy and robust way
+```{r tidyverse, include= F}
+library(tidyverse)
+```
+
+## Magrittr
+- pipe operator '%>%'
+- can be expressed as **then**
+  - read data **then** filter **then** aggregate
+
+---
+class: middle, inverse
+
+# Filtering
+
+---
+
+## What is filtering?
+- choosing rows of a data.frame
+  - based on a logical statement
+
+```{r filtering}
+aq = airquality
+
+colnames(aq); dim(aq); head(aq)
+```
+
+---
+
+## Simple filter
+```{r airquality}
+# choosing observations from May
+filter(aq, Month == 5)
+```
+
+---
+
+## Multiple filters
+```{r airquality_2}
+filter(filter(aq, Month == 5), Temp > 73)
+
+aq %>% 
+    filter(Month == 5) %>% 
+    filter(Temp > 73)
+```
+
+---
+
+## Multiple filters cont.
+```{r airquality_s3}
+aq %>% filter(Month == 5 & Temp > 73)
+
+aq %>% filter(Month == 5, Temp > 73)
+```
+
+---
+class: middle, inverse
+
+# Selection
+
+---
+
+## What is a selection?
+- choosing the columns of the data.frame
+  - based on the names
+
+```{r selection_right, eval = F}
+select(filter(aq, Month == 5, Temp > 73), Temp, Day)
+```
+
+```{r selection_left}
+aq %>%
+    filter(Month == 5, Temp > 73) %>% 
+    select(Temp, Day)
+```
+
+---
+
+## One column selection
+
+--
+
+```{r select_one_col}
+aq[1:5, 'Ozone']
+aq[1:5,] %>% 
+    select(Ozone)
+
+# overrride data.frame structure with pull()
+aq[1:5,] %>% 
+     pull(Ozone)
+```
+
+---
+class: middle, inverse
+
+# Practise

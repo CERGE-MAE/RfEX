@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+  <head>
+    <title>Lecture 4</title>
+    <meta charset="utf-8" />
+    <meta name="author" content="Michal Kubišta" />
+    <link href="libs/remark-css-0.0.1/default.css" rel="stylesheet" />
+    <link href="libs/remark-css-0.0.1/default-fonts.css" rel="stylesheet" />
+  </head>
+  <body>
+    <textarea id="source">
+class: center, middle, inverse, title-slide
+
+# Lecture 4
+### Michal Kubišta
+### 2020/10/28
+
+---
+
+
+## Structure
+- Import &amp; Export
+- Aggregation &amp; Mutation
+
+
+---
+class: middle, inverse
+
+# Import &amp; Export
+
+---
+class: middle, inverse
+
+# Mutation &amp; Aggregation
+
+---
+
+## Mutation
+- adding a new or changing existing columns
+
+```r
+econ =
+    readxl::read_excel("data/econmap.xlsx", 1) %&gt;%
+    select(name, year, gdp_cap, energy_productivity, population, labor_force, tfp)
+head(econ)
+```
+
+```
+## # A tibble: 6 x 7
+##   name         year gdp_cap energy_productivity population labor_force   tfp
+##   &lt;chr&gt;       &lt;dbl&gt;   &lt;dbl&gt;               &lt;dbl&gt;      &lt;dbl&gt;       &lt;dbl&gt; &lt;dbl&gt;
+## 1 Afghanistan  1980    974.               1467.     13180.       4115.  116.
+## 2 Afghanistan  1981   1018.               1321.     12964.       4025.  120.
+## 3 Afghanistan  1982   1053.               1291.     12634.       3905.  122.
+## 4 Afghanistan  1983   1140.               1143.     12242.       3769.  130.
+## 5 Afghanistan  1984   1199.               1176.     11854.       3636.  134.
+## 6 Afghanistan  1985   1236.               1221.     11529.       3517.  135.
+```
+
+---
+
+## Mutation in baseR
+- ading new or changing existing columns
+
+```r
+econ$region = ifelse(econ$name == "Afghanistan", "Afghan", "Others") # base R
+head(econ)
+```
+
+```
+## # A tibble: 6 x 8
+##   name       year gdp_cap energy_productivi~ population labor_force   tfp region
+##   &lt;chr&gt;     &lt;dbl&gt;   &lt;dbl&gt;              &lt;dbl&gt;      &lt;dbl&gt;       &lt;dbl&gt; &lt;dbl&gt; &lt;chr&gt; 
+## 1 Afghanis~  1980    974.              1467.     13180.       4115.  116. Afghan
+## 2 Afghanis~  1981   1018.              1321.     12964.       4025.  120. Afghan
+## 3 Afghanis~  1982   1053.              1291.     12634.       3905.  122. Afghan
+## 4 Afghanis~  1983   1140.              1143.     12242.       3769.  130. Afghan
+## 5 Afghanis~  1984   1199.              1176.     11854.       3636.  134. Afghan
+## 6 Afghanis~  1985   1236.              1221.     11529.       3517.  135. Afghan
+```
+
+```r
+econ$region = NULL # erase column
+colnames(econ)
+```
+
+```
+## [1] "name"                "year"                "gdp_cap"            
+## [4] "energy_productivity" "population"          "labor_force"        
+## [7] "tfp"
+```
+
+---
+
+## Mutation in Tidyverse
+- ading new or changing existing columns
+
+
+```r
+econ %&gt;%
+    mutate(region = ifelse(name == "Afghanistan", "Afghan", "Others"),
+           tfp = NULL)
+```
+
+```
+## # A tibble: 1,452 x 7
+##    name         year gdp_cap energy_productivity population labor_force region
+##    &lt;chr&gt;       &lt;dbl&gt;   &lt;dbl&gt;               &lt;dbl&gt;      &lt;dbl&gt;       &lt;dbl&gt; &lt;chr&gt; 
+##  1 Afghanistan  1980    974.               1467.     13180.       4115. Afghan
+##  2 Afghanistan  1981   1018.               1321.     12964.       4025. Afghan
+##  3 Afghanistan  1982   1053.               1291.     12634.       3905. Afghan
+##  4 Afghanistan  1983   1140.               1143.     12242.       3769. Afghan
+##  5 Afghanistan  1984   1199.               1176.     11854.       3636. Afghan
+##  6 Afghanistan  1985   1236.               1221.     11529.       3517. Afghan
+##  7 Afghanistan  1986   1303.               1437.     11262.       3428. Afghan
+##  8 Afghanistan  1987   1190.                663.     11063.       3369  Afghan
+##  9 Afghanistan  1988   1097.                310.     11013.       3356. Afghan
+## 10 Afghanistan  1989   1001.                275.     11215.       3410. Afghan
+## # ... with 1,442 more rows
+```
+
+
+
+---
+
+## Aggregation
+- calculate function by group
+
+
+```r
+econ %&gt;% 
+    group_by(name) %&gt;% 
+    summarise(gdp = mean(gdp_cap),
+              energy = sum(energy_productivity)
+              )
+```
+
+```
+## `summarise()` ungrouping output (override with `.groups` argument)
+```
+
+```
+## # A tibble: 12 x 3
+##    name            gdp  energy
+##    &lt;chr&gt;         &lt;dbl&gt;   &lt;dbl&gt;
+##  1 Afghanistan   5445. 140496.
+##  2 Albania      62660. 173414.
+##  3 Algeria      12243.  74240.
+##  4 Angola       22939.  61978.
+##  5 Argentina    36793.  89449.
+##  6 Armenia      98248.  88286.
+##  7 Australia    67553. 256290.
+##  8 Austria      59889. 436950.
+##  9 Azerbaijan   96707.     NA 
+## 10 Bahamas, The 47685. 152604.
+## 11 Bahrain      31303.  39337.
+## 12 Bangladesh    6341.  85363.
+```
+
+---
+
+## Aggregation on multi-index
+
+
+```r
+econ %&gt;% 
+    group_by(region, year) %&gt;% 
+    summarise(pop = mean(population),
+              labor = mean(labor_force)) %&gt;% 
+    ungroup() %&gt;% 
+    mutate(active = labor / pop) 
+```
+
+```
+## `summarise()` regrouping output by 'region' (override with `.groups` argument)
+```
+
+```
+## # A tibble: 242 x 5
+##    region  year    pop labor active
+##    &lt;chr&gt;  &lt;dbl&gt;  &lt;dbl&gt; &lt;dbl&gt;  &lt;dbl&gt;
+##  1 Afghan  1980 13180. 4115.  0.312
+##  2 Afghan  1981 12964. 4025.  0.311
+##  3 Afghan  1982 12634. 3905.  0.309
+##  4 Afghan  1983 12242. 3769.  0.308
+##  5 Afghan  1984 11854. 3636.  0.307
+##  6 Afghan  1985 11529. 3517.  0.305
+##  7 Afghan  1986 11262. 3428.  0.304
+##  8 Afghan  1987 11063. 3369   0.305
+##  9 Afghan  1988 11013. 3356.  0.305
+## 10 Afghan  1989 11215. 3410.  0.304
+## # ... with 232 more rows
+```
+    </textarea>
+<style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
+<script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
+<script>var slideshow = remark.create({
+"highlightStyle": "github",
+"highlightLines": true,
+"countIncrementalSlides": false
+});
+if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
+  window.dispatchEvent(new Event('resize'));
+});
+(function(d) {
+  var s = d.createElement("style"), r = d.querySelector(".remark-slide-scaler");
+  if (!r) return;
+  s.type = "text/css"; s.innerHTML = "@page {size: " + r.style.width + " " + r.style.height +"; }";
+  d.head.appendChild(s);
+})(document);
+
+(function(d) {
+  var el = d.getElementsByClassName("remark-slides-area");
+  if (!el) return;
+  var slide, slides = slideshow.getSlides(), els = el[0].children;
+  for (var i = 1; i < slides.length; i++) {
+    slide = slides[i];
+    if (slide.properties.continued === "true" || slide.properties.count === "false") {
+      els[i - 1].className += ' has-continuation';
+    }
+  }
+  var s = d.createElement("style");
+  s.type = "text/css"; s.innerHTML = "@media print { .has-continuation { display: none; } }";
+  d.head.appendChild(s);
+})(document);
+// delete the temporary CSS (for displaying all slides initially) when the user
+// starts to view slides
+(function() {
+  var deleted = false;
+  slideshow.on('beforeShowSlide', function(slide) {
+    if (deleted) return;
+    var sheets = document.styleSheets, node;
+    for (var i = 0; i < sheets.length; i++) {
+      node = sheets[i].ownerNode;
+      if (node.dataset["target"] !== "print-only") continue;
+      node.parentNode.removeChild(node);
+    }
+    deleted = true;
+  });
+})();
+// adds .remark-code-has-line-highlighted class to <pre> parent elements
+// of code chunks containing highlighted lines with class .remark-code-line-highlighted
+(function(d) {
+  const hlines = d.querySelectorAll('.remark-code-line-highlighted');
+  const preParents = [];
+  const findPreParent = function(line, p = 0) {
+    if (p > 1) return null; // traverse up no further than grandparent
+    const el = line.parentElement;
+    return el.tagName === "PRE" ? el : findPreParent(el, ++p);
+  };
+
+  for (let line of hlines) {
+    let pre = findPreParent(line);
+    if (pre && !preParents.includes(pre)) preParents.push(pre);
+  }
+  preParents.forEach(p => p.classList.add("remark-code-has-line-highlighted"));
+})(document);</script>
+
+<script>
+(function() {
+  var links = document.getElementsByTagName('a');
+  for (var i = 0; i < links.length; i++) {
+    if (/^(https?:)?\/\//.test(links[i].getAttribute('href'))) {
+      links[i].target = '_blank';
+    }
+  }
+})();
+</script>
+
+<script>
+slideshow._releaseMath = function(el) {
+  var i, text, code, codes = el.getElementsByTagName('code');
+  for (i = 0; i < codes.length;) {
+    code = codes[i];
+    if (code.parentNode.tagName !== 'PRE' && code.childElementCount === 0) {
+      text = code.textContent;
+      if (/^\\\((.|\s)+\\\)$/.test(text) || /^\\\[(.|\s)+\\\]$/.test(text) ||
+          /^\$\$(.|\s)+\$\$$/.test(text) ||
+          /^\\begin\{([^}]+)\}(.|\s)+\\end\{[^}]+\}$/.test(text)) {
+        code.outerHTML = code.innerHTML;  // remove <code></code>
+        continue;
+      }
+    }
+    i++;
+  }
+};
+slideshow._releaseMath(document);
+</script>
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+(function () {
+  var script = document.createElement('script');
+  script.type = 'text/javascript';
+  script.src  = 'https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML';
+  if (location.protocol !== 'file:' && /^https?:/.test(script.src))
+    script.src  = script.src.replace(/^https?:/, '');
+  document.getElementsByTagName('head')[0].appendChild(script);
+})();
+</script>
+  </body>
+</html>

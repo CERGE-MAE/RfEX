@@ -1,0 +1,9 @@
+.Rproj.user
+.Rhistory
+.RData
+.Ruserdata
+*.pdf
+*.Rproj
+remark.js
+libs*
+.tmp.drivedownload

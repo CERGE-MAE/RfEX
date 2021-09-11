@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+  <head>
+    <title>Lecture 3</title>
+    <meta charset="utf-8" />
+    <meta name="author" content="Michal Kubišta" />
+    <link href="libs/remark-css-0.0.1/default.css" rel="stylesheet" />
+    <link href="libs/remark-css-0.0.1/default-fonts.css" rel="stylesheet" />
+  </head>
+  <body>
+    <textarea id="source">
+class: center, middle, inverse, title-slide
+
+# Lecture 3
+### Michal Kubišta
+### 2020/10/14
+
+---
+
+
+## Structure
+- Filtering
+- Selection
+- Practise
+
+---
+
+## Welcome to the world of Tidyverse
+- brought to us by Hadley Wickham
+- bundle of packages for ETL
+- good for middle sized datasets (~ till 5M cells)
+- the easy and robust way
+
+
+## Magrittr
+- pipe operator '%&gt;%'
+- can be expressed as **then**
+  - read data **then** filter **then** aggregate
+
+---
+class: middle, inverse
+
+# Filtering
+
+---
+
+## What is filtering?
+- choosing rows of a data.frame
+  - based on a logical statement
+
+
+```r
+aq = airquality
+
+colnames(aq); dim(aq); head(aq)
+```
+
+```
+## [1] "Ozone"   "Solar.R" "Wind"    "Temp"    "Month"   "Day"
+```
+
+```
+## [1] 153   6
+```
+
+```
+##   Ozone Solar.R Wind Temp Month Day
+## 1    41     190  7.4   67     5   1
+## 2    36     118  8.0   72     5   2
+## 3    12     149 12.6   74     5   3
+## 4    18     313 11.5   62     5   4
+## 5    NA      NA 14.3   56     5   5
+## 6    28      NA 14.9   66     5   6
+```
+
+---
+
+## Simple filter
+
+```r
+# choosing observations from May
+filter(aq, Month == 5)
+```
+
+```
+##    Ozone Solar.R Wind Temp Month Day
+## 1     41     190  7.4   67     5   1
+## 2     36     118  8.0   72     5   2
+## 3     12     149 12.6   74     5   3
+## 4     18     313 11.5   62     5   4
+## 5     NA      NA 14.3   56     5   5
+## 6     28      NA 14.9   66     5   6
+## 7     23     299  8.6   65     5   7
+## 8     19      99 13.8   59     5   8
+## 9      8      19 20.1   61     5   9
+## 10    NA     194  8.6   69     5  10
+## 11     7      NA  6.9   74     5  11
+## 12    16     256  9.7   69     5  12
+## 13    11     290  9.2   66     5  13
+## 14    14     274 10.9   68     5  14
+## 15    18      65 13.2   58     5  15
+## 16    14     334 11.5   64     5  16
+## 17    34     307 12.0   66     5  17
+## 18     6      78 18.4   57     5  18
+## 19    30     322 11.5   68     5  19
+## 20    11      44  9.7   62     5  20
+## 21     1       8  9.7   59     5  21
+## 22    11     320 16.6   73     5  22
+## 23     4      25  9.7   61     5  23
+## 24    32      92 12.0   61     5  24
+## 25    NA      66 16.6   57     5  25
+## 26    NA     266 14.9   58     5  26
+## 27    NA      NA  8.0   57     5  27
+## 28    23      13 12.0   67     5  28
+## 29    45     252 14.9   81     5  29
+## 30   115     223  5.7   79     5  30
+## 31    37     279  7.4   76     5  31
+```
+
+---
+
+## Multiple filters
+
+```r
+filter(filter(aq, Month == 5), Temp &gt; 73)
+```
+
+```
+##   Ozone Solar.R Wind Temp Month Day
+## 1    12     149 12.6   74     5   3
+## 2     7      NA  6.9   74     5  11
+## 3    45     252 14.9   81     5  29
+## 4   115     223  5.7   79     5  30
+## 5    37     279  7.4   76     5  31
+```
+
+```r
+aq %&gt;% 
+    filter(Month == 5) %&gt;% 
+    filter(Temp &gt; 73)
+```
+
+```
+##   Ozone Solar.R Wind Temp Month Day
+## 1    12     149 12.6   74     5   3
+## 2     7      NA  6.9   74     5  11
+## 3    45     252 14.9   81     5  29
+## 4   115     223  5.7   79     5  30
+## 5    37     279  7.4   76     5  31
+```
+
+---
+
+## Multiple filters cont.
+
+```r
+aq %&gt;% filter(Month == 5 &amp; Temp &gt; 73)
+```
+
+```
+##   Ozone Solar.R Wind Temp Month Day
+## 1    12     149 12.6   74     5   3
+## 2     7      NA  6.9   74     5  11
+## 3    45     252 14.9   81     5  29
+## 4   115     223  5.7   79     5  30
+## 5    37     279  7.4   76     5  31
+```
+
+```r
+aq %&gt;% filter(Month == 5, Temp &gt; 73)
+```
+
+```
+##   Ozone Solar.R Wind Temp Month Day
+## 1    12     149 12.6   74     5   3
+## 2     7      NA  6.9   74     5  11
+## 3    45     252 14.9   81     5  29
+## 4   115     223  5.7   79     5  30
+## 5    37     279  7.4   76     5  31
+```
+
+---
+class: middle, inverse
+
+# Selection
+
+---
+
+## What is a selection?
+- choosing the columns of the data.frame
+  - based on the names
+
+
+```r
+select(filter(aq, Month == 5, Temp &gt; 73), Temp, Day)
+```
+
+
+```r
+aq %&gt;%
+    filter(Month == 5, Temp &gt; 73) %&gt;% 
+    select(Temp, Day)
+```
+
+```
+##   Temp Day
+## 1   74   3
+## 2   74  11
+## 3   81  29
+## 4   79  30
+## 5   76  31
+```
+
+---
+
+## One column selection
+
+--
+
+
+```r
+aq[1:5, 'Ozone']
+```
+
+```
+## [1] 41 36 12 18 NA
+```
+
+```r
+aq[1:5,] %&gt;% 
+    select(Ozone)
+```
+
+```
+##   Ozone
+## 1    41
+## 2    36
+## 3    12
+## 4    18
+## 5    NA
+```
+
+```r
+# overrride data.frame structure with pull()
+aq[1:5,] %&gt;% 
+     pull(Ozone)
+```
+
+```
+## [1] 41 36 12 18 NA
+```
+
+---
+class: middle, inverse
+
+# Practise
+    </textarea>
+<style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
+<script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
+<script>var slideshow = remark.create({
+"highlightStyle": "github",
+"highlightLines": true,
+"countIncrementalSlides": false
+});
+if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
+  window.dispatchEvent(new Event('resize'));
+});
+(function(d) {
+  var s = d.createElement("style"), r = d.querySelector(".remark-slide-scaler");
+  if (!r) return;
+  s.type = "text/css"; s.innerHTML = "@page {size: " + r.style.width + " " + r.style.height +"; }";
+  d.head.appendChild(s);
+})(document);
+
+(function(d) {
+  var el = d.getElementsByClassName("remark-slides-area");
+  if (!el) return;
+  var slide, slides = slideshow.getSlides(), els = el[0].children;
+  for (var i = 1; i < slides.length; i++) {
+    slide = slides[i];
+    if (slide.properties.continued === "true" || slide.properties.count === "false") {
+      els[i - 1].className += ' has-continuation';
+    }
+  }
+  var s = d.createElement("style");
+  s.type = "text/css"; s.innerHTML = "@media print { .has-continuation { display: none; } }";
+  d.head.appendChild(s);
+})(document);
+// delete the temporary CSS (for displaying all slides initially) when the user
+// starts to view slides
+(function() {
+  var deleted = false;
+  slideshow.on('beforeShowSlide', function(slide) {
+    if (deleted) return;
+    var sheets = document.styleSheets, node;
+    for (var i = 0; i < sheets.length; i++) {
+      node = sheets[i].ownerNode;
+      if (node.dataset["target"] !== "print-only") continue;
+      node.parentNode.removeChild(node);
+    }
+    deleted = true;
+  });
+})();
+// adds .remark-code-has-line-highlighted class to <pre> parent elements
+// of code chunks containing highlighted lines with class .remark-code-line-highlighted
+(function(d) {
+  const hlines = d.querySelectorAll('.remark-code-line-highlighted');
+  const preParents = [];
+  const findPreParent = function(line, p = 0) {
+    if (p > 1) return null; // traverse up no further than grandparent
+    const el = line.parentElement;
+    return el.tagName === "PRE" ? el : findPreParent(el, ++p);
+  };
+
+  for (let line of hlines) {
+    let pre = findPreParent(line);
+    if (pre && !preParents.includes(pre)) preParents.push(pre);
+  }
+  preParents.forEach(p => p.classList.add("remark-code-has-line-highlighted"));
+})(document);</script>
+
+<script>
+(function() {
+  var links = document.getElementsByTagName('a');
+  for (var i = 0; i < links.length; i++) {
+    if (/^(https?:)?\/\//.test(links[i].getAttribute('href'))) {
+      links[i].target = '_blank';
+    }
+  }
+})();
+</script>
+
+<script>
+slideshow._releaseMath = function(el) {
+  var i, text, code, codes = el.getElementsByTagName('code');
+  for (i = 0; i < codes.length;) {
+    code = codes[i];
+    if (code.parentNode.tagName !== 'PRE' && code.childElementCount === 0) {
+      text = code.textContent;
+      if (/^\\\((.|\s)+\\\)$/.test(text) || /^\\\[(.|\s)+\\\]$/.test(text) ||
+          /^\$\$(.|\s)+\$\$$/.test(text) ||
+          /^\\begin\{([^}]+)\}(.|\s)+\\end\{[^}]+\}$/.test(text)) {
+        code.outerHTML = code.innerHTML;  // remove <code></code>
+        continue;
+      }
+    }
+    i++;
+  }
+};
+slideshow._releaseMath(document);
+</script>
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+(function () {
+  var script = document.createElement('script');
+  script.type = 'text/javascript';
+  script.src  = 'https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML';
+  if (location.protocol !== 'file:' && /^https?:/.test(script.src))
+    script.src  = script.src.replace(/^https?:/, '');
+  document.getElementsByTagName('head')[0].appendChild(script);
+})();
+</script>
+  </body>
+</html>

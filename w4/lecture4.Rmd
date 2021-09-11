@@ -1,0 +1,96 @@
+---
+title: "Lecture 4"
+author: "Michal Kubi&#353;ta"
+date: "2020/10/28"
+output:
+  xaringan::moon_reader:
+    lib_dir: libs
+    nature:
+      highlightStyle: github
+      highlightLines: true
+      countIncrementalSlides: false
+---
+
+## Structure
+- Import & Export
+- Aggregation & Mutation
+```{r setup, include = FALSE}
+library(tidyverse)
+```
+
+---
+class: middle, inverse
+
+# Import & Export
+
+---
+class: middle, inverse
+
+# Mutation & Aggregation
+
+---
+
+## Mutation
+- adding a new or changing existing columns
+```{r mutate}
+econ =
+    readxl::read_excel("data/econmap.xlsx", 1) %>%
+    select(name, year, gdp_cap, energy_productivity, population, labor_force, tfp)
+head(econ)
+```
+
+---
+
+## Mutation in baseR
+- ading new or changing existing columns
+```{r mutate_base}
+econ$region = ifelse(econ$name == "Afghanistan", "Afghan", "Others") # base R
+head(econ)
+econ$region = NULL # erase column
+colnames(econ)
+
+```
+
+---
+
+## Mutation in Tidyverse
+- ading new or changing existing columns
+
+```{r mutate_tidy}
+econ %>%
+    mutate(region = ifelse(name == "Afghanistan", "Afghan", "Others"),
+           tfp = NULL)
+```
+
+```{r region, include = FALSE}
+econ =
+    econ %>%
+    mutate(region = ifelse(name == "Afghanistan", "Afghan", "Others"),
+           tfp = NULL)
+```
+
+---
+
+## Aggregation
+- calculate function by group
+
+```{r aggragate}
+econ %>% 
+    group_by(name) %>% 
+    summarise(gdp = mean(gdp_cap),
+              energy = sum(energy_productivity)
+              )
+```
+
+---
+
+## Aggregation on multi-index
+
+```{r aggregate_multi}
+econ %>% 
+    group_by(region, year) %>% 
+    summarise(pop = mean(population),
+              labor = mean(labor_force)) %>% 
+    ungroup() %>% 
+    mutate(active = labor / pop) 
+```

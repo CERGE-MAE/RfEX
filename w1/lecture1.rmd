@@ -1,0 +1,58 @@
+---
+title: "Lecture 1"
+author: "Michal Kubi&#353;ta"
+date: "2020/09/30"
+output:
+  xaringan::moon_reader:
+    lib_dir: libs
+    nature:
+      highlightStyle: github
+      highlightLines: true
+      countIncrementalSlides: false
+---
+
+## Structure
+- Introduction & Course Overview
+- R & RStudio
+
+---
+class: middle, inverse
+
+# Introduction & Course Overview
+
+---
+
+## About me
+- Michal Kubi&#353;ta
+- **Main focus:** European FMCG retail market
+- **Contact:** michal.kubista@nielsen.com
+- **Office hours:** upon prior arrangment 
+- I'm bad with names ... *sorry*
+- <font color = "orange"><b>please include string "RfEX2019" in your email subject</b></font>
+
+---
+
+## Content
+- Basics of R
+- Git
+- ETL
+- RegEx
+- Visualisation
+- Stats & Ecox
+
+---
+
+## Grading
+- Pass or fail
+- 4 small tests
+    - weeks 4, 7, 10, 13
+    - each worth 25 points
+- <font color= "orange"><b>Conditions to pass</b></font>
+
+    - <font color= "orange"> at least 70p in total </font>
+    - <font color= "orange"> at least 60% in 3 tests </font> 
+
+---
+class: middle, inverse
+
+# R & RStudio
