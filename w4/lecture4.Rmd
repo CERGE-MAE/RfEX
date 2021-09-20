@@ -13,6 +13,7 @@ output:
 
 ## Structure
 - Import & Export
+- Sorting
 - Aggregation & Mutation
 ```{r setup, include = FALSE}
 library(tidyverse)
@@ -26,6 +27,43 @@ class: middle, inverse
 ---
 class: middle, inverse
 
+# Sorting
+
+---
+
+## General aproach - order
+- can be used for any vector
+  - including column of matrix or data.frame
+- returns ordering - indexes that can be used to order the data
+
+```{r mtc}
+mtc = mtcars %>% select(mpg, cyl, disp, hp) 
+head(mtc, 5)
+```
+
+---
+
+## Using the ordering
+```{r order}
+order(mtc$mpg)[1:10]
+mtc[order(mtc$mpg),] %>% head(5)
+mtc[order(-mtc$mpg, mtc$hp),] %>% head(5)
+```
+
+---
+
+## Data.frame specific - arrange
+
+```{r arrange}
+mtc %>% 
+  arrange(-mpg, hp) %>% 
+  head(5)
+```
+
+---
+
+class: middle, inverse
+
 # Mutation & Aggregation
 
 ---
@@ -36,6 +74,7 @@ class: middle, inverse
 econ =
     readxl::read_excel("data/econmap.xlsx", 1) %>%
     select(name, year, gdp_cap, energy_productivity, population, labor_force, tfp)
+
 head(econ)
 ```
 
@@ -93,4 +132,18 @@ econ %>%
               labor = mean(labor_force)) %>% 
     ungroup() %>% 
     mutate(active = labor / pop) 
+```
+
+---
+
+## Aggregation with multi-value output
+- functions can return several values for each group
+- typically used for top X items per group 
+
+```{r aggregate_top}
+econ %>% 
+  group_by(year) %>% 
+  top_n(3, gdp_cap) %>% 
+  arrange(year, -gdp_cap) %>% 
+  head(10)
 ```
