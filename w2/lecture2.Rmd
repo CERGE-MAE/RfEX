@@ -79,14 +79,13 @@ NA; 0 / 0 # this is bad idea
 
 ```{r casting}
 as.character(1)
-as.numeric("1")
+as.numeric('1')
 as.integer(1.5)
 ```
 
 ---
 ## Data structures
-- what a variable can be?
-
+- what can the variable be?
 
 
 --
@@ -118,7 +117,7 @@ c(25, T, 'a') # T is the same as TRUE
 ## Factors - special data type
 
 ```{r factors}
-fac = factor(c('a','a','b','c'), levels = c("a","b","c"))
+fac = factor(c('a','a','b','c'), levels = c('a','b','c', 'd'))
 fac
 as.numeric(fac)
 ```
@@ -146,7 +145,7 @@ matrix(c('R', 5, 'C', NA, Sys.Date() , T), nrow = 3, ncol = 2)
 ## Data frames
 
 ```{r data_frame}
-input = data.frame(wage = c(1:3), gender = c("male", "female", NA))
+input = data.frame(wage = c(1:3), gender = c('male', 'female', NA))
 input
 rownames(input)
 colnames(input)
@@ -171,8 +170,8 @@ output
 ## Lists
 
 ```{r list}
-list(125, "R is good")
-list(onetyone = 11, zwoelf = "12")
+list(125, 'R is good')
+list(onetyone = 11, zwoelf = '12')
 list(a = c(1:5))
 ```
 
@@ -275,7 +274,7 @@ T | F
 ## Comparison
 
 ```{r comparison}
-"a" == "b"
+'a' == 'b'
 2 != 5
 2 %in% 1:5
 3.985 < 7
@@ -309,12 +308,12 @@ class: middle, inverse
 - data.frames and matrices can have rownames and colnames
 
 ```{r naming}
-c(a = 3, "b" = 4)
+c(a = 3, 'b' = 4)
 
 namevec = 1:3
 names(namevec) = c('a', 'b', 'c'); namevec
 
-list(g = 1, "h" = "R is very kind")
+list(g = 1, 'h' = 'R is very kind')
 ```
 
 ---
@@ -323,12 +322,12 @@ list(g = 1, "h" = "R is very kind")
 
 ```{r naming_cont}
 namemat = matrix(1:4, 2)
-colnames(namemat) = c("eq.1","eq.2")
-rownames(namemat) = c("x","y")
+colnames(namemat) = c('eq.1','eq.2')
+rownames(namemat) = c('x','y')
 namemat
 
-namedf = data.frame("a" = 1L:3L, b = c('a','b','c'))
-rownames(namedf) = c("Jana","Mirka","Lisa")
+namedf = data.frame('a' = 1L:3L, b = c('a','b','c'))
+rownames(namedf) = c('Jana','Mirka','Lisa')
 namedf
 ```
 
@@ -346,7 +345,7 @@ namedf
 
 ```{r slice_vec}
 testvec = 1:6
-names(testvec) = c("a", 'b', "c", "d", 'e', "f")
+names(testvec) = c('a', 'b', 'c', 'd', 'e', 'f')
 testvec[2]
 testvec[c(3,5)]
 testvec[1:3]
@@ -368,7 +367,7 @@ testvec[sec_vec < 4]
 ### Slicing lists
 
 ```{r slice_list}
-testlist = list(a = matrix(2,1), "b" = c("R","is very kind"), c = T, d = NA)
+testlist = list(a = matrix(2,1), 'b' = c('R','is very kind'), c = T, d = NA)
 testlist[c(2, 4)]
 testlist[c('c','a')]
 ```
