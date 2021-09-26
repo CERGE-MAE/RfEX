@@ -48,7 +48,7 @@ class: middle, inverse
 ## Grading
 - Pass or fail
 - 4 home assignments
-    - weeks 4, 7, 10, 13
+    - approximately weeks 4, 7, 10, 13
     - each worth 25 points
 - <font color= "orange"><b>Conditions to pass</b></font>
 
