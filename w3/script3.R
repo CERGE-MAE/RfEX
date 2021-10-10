@@ -1,5 +1,5 @@
 library(magrittr)
-install.packages("magrittr")
+# install.packages("magrittr")
 
 # 1.) FUN WITH FACTORS ----------------------------------------------------
 sample(c("3","1"), 20, replace = T)
