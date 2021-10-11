@@ -12,3 +12,5 @@ The list of topics follows:
 7. Regex, string functions
 8. Data cleaning
 9. Visualisation basic & ggplot
+
+Test assignment: https://classroom.github.com/a/L79s0Ueg
