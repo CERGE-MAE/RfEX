@@ -96,7 +96,21 @@ sales = read_csv("w4/data/sales_data_sample.csv")
 # https://toolbox.google.com/datasetsearch/search?query=sales&docid=1%2BevukXLxiyX4xlWAAAAAA%3D%3D
 head(sales)
 summary(sales)
+str(sales)
 
+# SORTING 
+sales %>%
+    select(QUANTITYORDERED, PRICEEACH, SALES) %>%
+    head()
+
+sales %>% 
+    arrange(-QUANTITYORDERED) %>%
+    select(QUANTITYORDERED, PRICEEACH, SALES) %>% 
+    head()
+
+sales[order(-sales$SALES),] %>% 
+    select(QUANTITYORDERED, PRICEEACH, SALES) %>% 
+    head()
 
 # REGIONS -----------------------------------------------------------------
 sales %>% 
@@ -131,7 +145,16 @@ sales %>%
     group_by(TERRITORY) %>% 
     summarise(basket = mean(basket),
               price = mean(price),
-              visits = length(ORDERNUMBER))
+              visits = length(ORDERNUMBER)) %>% 
+    arrange(-visits)
+
+
+# Let's check the largest orders per region
+sales %>% 
+    select(TERRITORY, SALES, QUANTITYORDERED, PRICEEACH) %>% 
+    group_by(TERRITORY) %>% 
+    top_n(5, SALES) %>% 
+    arrange(TERRITORY, -SALES)
 
 # SALES PER YEAR ----------------------------------------------------------
 # the first overview, what are the sales each year?
@@ -142,6 +165,7 @@ sales %>%
 # how come the year 2005 has such a low sales?
 sales %>% 
     filter(YEAR_ID == "2005") %>% 
+    arrange(MONTH_ID) %>% 
     pull(MONTH_ID) %>% 
     unique()
 
