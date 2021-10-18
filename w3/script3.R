@@ -38,6 +38,7 @@ now
 attributes(now) # special format
 
 now$hour
+now$min
 now$wday
 now$yday
 
@@ -59,6 +60,7 @@ c(factor(c("A","B","C")),"B") # brainfuck
 # 4.) DATA.FRAMES BASICS ------------------------------------------------------
 # PACKAGES
 library(tidyverse)
+install.packages('tidyverse')
 
 # DATA LOADING
 stocks =
