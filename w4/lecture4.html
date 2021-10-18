@@ -13,13 +13,14 @@ class: center, middle, inverse, title-slide
 
 # Lecture 4
 ### Michal Kubišta
-### 2020/10/28
+### 2021/10/18
 
 ---
 
 
 ## Structure
 - Import &amp; Export
+- Sorting
 - Aggregation &amp; Mutation
 
 
@@ -29,6 +30,92 @@ class: middle, inverse
 # Import &amp; Export
 
 ---
+class: middle, inverse
+
+# Sorting
+
+---
+
+## General aproach - order
+- can be used for any vector
+  - including column of matrix or data.frame
+- returns ordering - indexes that can be used to order the data
+
+
+```r
+mtc = mtcars %&gt;% select(mpg, cyl, disp, hp) 
+head(mtc, 5)
+```
+
+```
+##                    mpg cyl disp  hp
+## Mazda RX4         21.0   6  160 110
+## Mazda RX4 Wag     21.0   6  160 110
+## Datsun 710        22.8   4  108  93
+## Hornet 4 Drive    21.4   6  258 110
+## Hornet Sportabout 18.7   8  360 175
+```
+
+---
+
+## Using the ordering
+
+```r
+order(mtc$mpg)[1:10]
+```
+
+```
+##  [1] 15 16 24  7 17 31 14 23 22 29
+```
+
+```r
+mtc[order(mtc$mpg),] %&gt;% head(5)
+```
+
+```
+##                      mpg cyl disp  hp
+## Cadillac Fleetwood  10.4   8  472 205
+## Lincoln Continental 10.4   8  460 215
+## Camaro Z28          13.3   8  350 245
+## Duster 360          14.3   8  360 245
+## Chrysler Imperial   14.7   8  440 230
+```
+
+```r
+mtc[order(-mtc$mpg, mtc$hp),] %&gt;% head(5)
+```
+
+```
+##                 mpg cyl disp  hp
+## Toyota Corolla 33.9   4 71.1  65
+## Fiat 128       32.4   4 78.7  66
+## Honda Civic    30.4   4 75.7  52
+## Lotus Europa   30.4   4 95.1 113
+## Fiat X1-9      27.3   4 79.0  66
+```
+
+---
+
+## Data.frame specific - arrange
+
+
+```r
+mtc %&gt;% 
+  arrange(-mpg, hp) %&gt;% 
+  head(5)
+```
+
+```
+##                 mpg cyl disp  hp
+## Toyota Corolla 33.9   4 71.1  65
+## Fiat 128       32.4   4 78.7  66
+## Honda Civic    30.4   4 75.7  52
+## Lotus Europa   30.4   4 95.1 113
+## Fiat X1-9      27.3   4 79.0  66
+```
+
+---
+
 class: middle, inverse
 
 # Mutation &amp; Aggregation
@@ -42,6 +129,7 @@ class: middle, inverse
 econ =
     readxl::read_excel("data/econmap.xlsx", 1) %&gt;%
     select(name, year, gdp_cap, energy_productivity, population, labor_force, tfp)
+
 head(econ)
 ```
 
@@ -190,6 +278,38 @@ econ %&gt;%
 ##  9 Afghan  1988 11013. 3356.  0.305
 ## 10 Afghan  1989 11215. 3410.  0.304
 ## # ... with 232 more rows
+```
+
+---
+
+## Aggregation with multi-value output
+- functions can return several values for each group
+- typically used for top X items per group 
+
+
+```r
+econ %&gt;% 
+  group_by(year) %&gt;% 
+  top_n(3, gdp_cap) %&gt;% 
+  arrange(year, -gdp_cap) %&gt;% 
+  head(10)
+```
+
+```
+## # A tibble: 10 x 7
+## # Groups:   year [4]
+##    name          year gdp_cap energy_productivity population labor_force region
+##    &lt;chr&gt;        &lt;dbl&gt;   &lt;dbl&gt;               &lt;dbl&gt;      &lt;dbl&gt;       &lt;dbl&gt; &lt;chr&gt; 
+##  1 Bahamas, The  1980  26037.                598.       211.        90.2 Others
+##  2 Bahrain       1980  21025.                339.       360.       141.  Others
+##  3 Austria       1980  20698.               2024.      7555.      3251.  Others
+##  4 Bahamas, The  1981  23115.                500.       215.        94.0 Others
+##  5 Austria       1981  20682.               2182.      7550.      3279.  Others
+##  6 Australia     1981  20177.               1081.     14898.      6873.  Others
+##  7 Bahamas, The  1982  24118.                689.       220.        97.4 Others
+##  8 Austria       1982  21094.               2408.      7551.      3295.  Others
+##  9 Australia     1982  20550.               1117.     15101.      6952.  Others
+## 10 Bahamas, The  1983  24441.               1075.       225.       101.  Others
 ```
     </textarea>
 <style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
