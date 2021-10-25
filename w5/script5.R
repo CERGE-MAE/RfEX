@@ -73,7 +73,7 @@ head(h2)
 
 # add country identifiers
 EI_comp %>% 
-    full_join(countries, by = c("country" = "Country"))
+    full_join(countries, by = c("country" = "country"))
 
 EI_comp %>% 
     left_join(countries) %>% View()
@@ -81,5 +81,5 @@ EI_comp %>%
 # & add commodity description
 EI_comp %>% 
     left_join(countries, by = "country") %>% 
-    inner_join(h2, by = "h2") %>% 
+    inner_join(h2, by = "hs2") %>% 
     View()
