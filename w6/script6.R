@@ -50,7 +50,7 @@ for (i in colnames(games)) {
 
 # vectorised
 games = map_df(games, check_numeric)
-    
+
 
 # READ BY YEAR FUNCTION ---------------------------------------------------
 
@@ -62,11 +62,12 @@ read_by_year = function(path, years) {
         files = files[files %in% pattern]
         
         writeLines(paste0("Reading files:\n",
-                     paste(files, collapse = "\n")
-                     )
-              )
-
+                          paste(files, collapse = "\n")
+        )
+        )
+        
     } else if (year != "all") {
+        writeLines("Reading all files")
     } else {
         stop("Please specify years as numeric or character vector, or use 'all' to use all files")
     } # WHAT IS WRONG WITH THIS?
@@ -95,15 +96,19 @@ games_lm =
     do.call(rbind.data.frame, .) %>%
     mutate(desc = rownames(.))
 
-games_lm$year = 
+games_lm$obj = 
     games_lm %>% 
     pull(desc) %>% 
-    map_chr(~strsplit(.x, "\\.")[[1]][1])
+    map(~strsplit(.x, "\\.")[[1]])
 
-games_lm$coef =
-    games_lm %>% 
-    pull(desc) %>% 
-    map_chr(~strsplit(.x, "\\.")[[1]][2])
+games_lm = 
+    games_lm %>%
+    unnest_wider(obj) %>% 
+    rename(
+        year = "...1",
+        coef = "...2"
+    ) %>% 
+    select(-desc)
 
 games_lm %>% 
     select(year, coef, Estimate) %>% 
@@ -122,13 +127,15 @@ games %>%
 
 games %>% 
     split(.$Year_of_Release) %>% 
-    map(., ~write_csv(.x,
-                       paste0("w6/data/yearly/game_sales",
-                              unique(.x$Year_of_Release),
-                              ".csv"
-                              )
-                       )
-         )
+    walk(
+        ~write_csv(
+            .x,
+            paste0("w6/data/yearly/game_sales",
+                   unique(.x$Year_of_Release),
+                   ".csv"
+            )
+        )
+    )
 
 list_df = 
     games %>% 

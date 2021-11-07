@@ -1,7 +1,7 @@
 ---
 title: "Lecture 6"
 author: "Michal Kubi&#353;ta"
-date: "2020/11/04"
+date: "2021/11/07"
 output:
   xaringan::moon_reader:
     lib_dir: libs
