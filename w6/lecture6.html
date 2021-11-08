@@ -4,6 +4,7 @@
     <title>Lecture 6</title>
     <meta charset="utf-8" />
     <meta name="author" content="Michal Kubišta" />
+    <script src="libs/header-attrs-2.11/header-attrs.js"></script>
     <link href="libs/remark-css-0.0.1/default.css" rel="stylesheet" />
     <link href="libs/remark-css-0.0.1/default-fonts.css" rel="stylesheet" />
   </head>
@@ -13,7 +14,7 @@ class: center, middle, inverse, title-slide
 
 # Lecture 6
 ### Michal Kubišta
-### 2020/11/04
+### 2021/11/07
 
 ---
 
@@ -278,7 +279,7 @@ my_func()
 ```
 
 ```
-## &lt;environment: 0x00000000149fc648&gt;
+## &lt;environment: 0x0000000023fa7db0&gt;
 ```
 
 ---
@@ -381,7 +382,7 @@ system.time({
 
 ```
 ##    user  system elapsed 
-##    2.36    0.00    2.36
+##    4.24    0.01    4.35
 ```
 
 ```r
@@ -390,7 +391,7 @@ system.time({b = data.table::data.table(a)[, a^2]})
 
 ```
 ##    user  system elapsed 
-##    0.39    0.06    0.45
+##    0.86    0.13    1.05
 ```
 
 
@@ -472,6 +473,32 @@ if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
     deleted = true;
   });
 })();
+(function() {
+  "use strict"
+  // Replace <script> tags in slides area to make them executable
+  var scripts = document.querySelectorAll(
+    '.remark-slides-area .remark-slide-container script'
+  );
+  if (!scripts.length) return;
+  for (var i = 0; i < scripts.length; i++) {
+    var s = document.createElement('script');
+    var code = document.createTextNode(scripts[i].textContent);
+    s.appendChild(code);
+    var scriptAttrs = scripts[i].attributes;
+    for (var j = 0; j < scriptAttrs.length; j++) {
+      s.setAttribute(scriptAttrs[j].name, scriptAttrs[j].value);
+    }
+    scripts[i].parentElement.replaceChild(s, scripts[i]);
+  }
+})();
+(function() {
+  var links = document.getElementsByTagName('a');
+  for (var i = 0; i < links.length; i++) {
+    if (/^(https?:)?\/\//.test(links[i].getAttribute('href'))) {
+      links[i].target = '_blank';
+    }
+  }
+})();
 // adds .remark-code-has-line-highlighted class to <pre> parent elements
 // of code chunks containing highlighted lines with class .remark-code-line-highlighted
 (function(d) {
@@ -489,17 +516,6 @@ if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
   }
   preParents.forEach(p => p.classList.add("remark-code-has-line-highlighted"));
 })(document);</script>
-
-<script>
-(function() {
-  var links = document.getElementsByTagName('a');
-  for (var i = 0; i < links.length; i++) {
-    if (/^(https?:)?\/\//.test(links[i].getAttribute('href'))) {
-      links[i].target = '_blank';
-    }
-  }
-})();
-</script>
 
 <script>
 slideshow._releaseMath = function(el) {

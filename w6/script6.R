@@ -63,10 +63,10 @@ read_by_year = function(path, years) {
         
         writeLines(paste0("Reading files:\n",
                           paste(files, collapse = "\n")
-        )
+                          )
         )
         
-    } else if (year != "all") {
+    } else if (years == "all") {
         writeLines("Reading all files")
     } else {
         stop("Please specify years as numeric or character vector, or use 'all' to use all files")
