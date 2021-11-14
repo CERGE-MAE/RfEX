@@ -1,7 +1,7 @@
 ---
 title: "Lecture 7"
 author: "Michal Kubi&#353;ta"
-date: "2018/11/07"
+date: "2021/11/15"
 output:
   xaringan::moon_reader:
     lib_dir: libs
@@ -57,7 +57,7 @@ corpus = romeo[-1:-32]
 ```{r simple_funcs}
 library(stringr)
 
-corpus[1:4] %T>% 
+corpus[1:4] %>% 
     print() %>% 
     str_length() # or "nchar()" from base R
 
@@ -139,7 +139,7 @@ class: middle, inverse
 ---
 
 ## RegEx
-- way of pattern compilation
+- a method for pattern compilation
   - extracting parts of the text
 - when the position isn't fixed (most of the times)
   - str_sub doesn't help
