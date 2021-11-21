@@ -7,18 +7,18 @@ romeo = readLines("http://www.gutenberg.org/cache/epub/1112/pg1112.txt", encodin
 romeo %<>% {.[. != ""]}
 # romeo = romeo[romeo != ""]
 
-na_rem = function(x){
-    return(x[!is.na(x)])
-}
-
 # split into header nad corpus
-first_line = which(romeo[1:100] == "1595")
+first_line = which(romeo == "1595")
 romeo = romeo[-1:-first_line]
 header = romeo[4:28]
 corpus = romeo[-1:-32]
 rm(first_line, romeo)
 
 # FIND THE LINES OF EVERY PERSON IN THE BOOK ----------------------------------
+
+na_rem = function(x){
+    return(x[!is.na(x)])
+}
 
 # define person names
 persons = 
@@ -124,40 +124,33 @@ liquor %>%
 # lets check GPS
 liquor %<>% 
     mutate(gps = str_extract(`Store Location`,
-                             "[0-9]{2}\\.[0-9]{1,6}, \\-[0-9]{2}\\.[0-9]{1,6}"))
+                             "[0-9]{2}\\.[0-9]{1,6}, \\-[0-9]{2,3}\\.[0-9]{1,6}"))
 
-# where GPS wanst extracted?
+# where GPS wasnt extracted?
 liquor %>% 
     pull(gps) %>% 
     is.na() %>% 
     filter(liquor, .) %>% 
-    select(`Store Location`)
+    pull(`Store Location`) %>% 
+    unique()
 
 splitter = function(x) {
     if (is.na(x)) {
         txt = c(NA,NA)
     } else {
-        txt = unlist(strsplit(x, split = ", "))
+        txt =
+            strsplit(x, split = ", ") %>% 
+            unlist()
     }
     names(txt) = c("lat","lon")
     return(txt)
 }
 
-gps_loc =
-    liquor %>% 
-    pull(gps) %>% 
-    map(splitter) %>% 
-    do.call(rbind.data.frame,.)
-
-colnames(gps_loc) = c("lat", "lon")
-
-fac_to_char = function(x) {
-    as.numeric(as.character(x)) %>% 
-        return()
-}
-
 liquor =
-    gps_loc %>% 
-    cbind(liquor, .) %>% 
-    select(-gps) %>% 
-    mutate_at(c("lat", "lon"), .funs = fac_to_char)
+    liquor %>% 
+    mutate(gps_c = map(gps, splitter)) %>% 
+    unnest_wider(gps_c)
+
+liquor %>% 
+    mutate_at(c("lat", "lon"), .funs = as.numeric) %>% 
+    View()

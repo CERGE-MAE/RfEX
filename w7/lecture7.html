@@ -13,7 +13,7 @@ class: center, middle, inverse, title-slide
 
 # Lecture 7
 ### Michal Kubišta
-### 2018/11/07
+### 2021/11/22
 
 ---
 
@@ -62,7 +62,7 @@ corpus = romeo[-1:-32]
 ```r
 library(stringr)
 
-corpus[1:4] %T&gt;% 
+corpus[1:4] %&gt;% 
     print() %&gt;% 
     str_length() # or "nchar()" from base R
 ```
@@ -230,7 +230,7 @@ class: middle, inverse
 ---
 
 ## RegEx
-- way of pattern compilation
+- a method for pattern compilation
   - extracting parts of the text
 - when the position isn't fixed (most of the times)
   - str_sub doesn't help
